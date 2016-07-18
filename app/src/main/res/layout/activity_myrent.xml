@@ -61,4 +61,13 @@
       android:layout_alignTop="@+id/deleteResidences"
       android:layout_alignEnd="@+id/selectResidences"/>
 
+  <Button
+      android:id="@+id/getRowId"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="get row-Id"
+      android:layout_below="@+id/deleteResidences"
+      android:layout_alignParentStart="true"
+      android:layout_marginTop="50dp"/>
+
 </RelativeLayout>

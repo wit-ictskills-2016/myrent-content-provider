@@ -22,7 +22,7 @@ public class DbHelper extends SQLiteOpenHelper
   static final int DATABASE_VERSION = 1;
   static final String TABLE_RESIDENCES = "tableResidences";
 
-  static final String PRIMARY_KEY = "id";
+  static final String PRIMARY_KEY = "uuid";
   static final String GEOLOCATION = "geolocation";
   static final String DATE = "date";
   static final String RENTED = "rented";
@@ -41,7 +41,7 @@ public class DbHelper extends SQLiteOpenHelper
   public void onCreate(SQLiteDatabase db) {
     String createTable =
         "CREATE TABLE tableResidences " +
-            "(id text primary key, " +
+            "(uuid text primary key, " +
             "geolocation text," +
             "date text," +
             "rented text," +
@@ -59,7 +59,7 @@ public class DbHelper extends SQLiteOpenHelper
   public void addResidence(Residence residence) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
-    values.put(PRIMARY_KEY, residence.id.toString());
+    values.put(PRIMARY_KEY, residence.uuid.toString());
     values.put(GEOLOCATION, residence.geolocation);
     values.put(DATE, String.valueOf(residence.date.getTime()));
     values.put(RENTED, residence.rented == true ? "yes" : "no");
@@ -79,13 +79,13 @@ public class DbHelper extends SQLiteOpenHelper
 
     try {
       residence = new Residence();
-
-      cursor = db.rawQuery("SELECT * FROM tableResidences WHERE id = ?", new String[]{resId.toString() + ""});
+      String query = "SELECT * FROM " + TABLE_RESIDENCES + " WHERE " + PRIMARY_KEY + " = ?";
+      cursor = db.rawQuery(query, new String[]{resId.toString() + ""});
 
       if (cursor.getCount() > 0) {
         int columnIndex = 0;
         cursor.moveToFirst();
-        residence.id = UUID.fromString(cursor.getString(columnIndex++));
+        residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
         residence.geolocation = cursor.getString(columnIndex++);
         residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
         residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
@@ -103,7 +103,7 @@ public class DbHelper extends SQLiteOpenHelper
   public void deleteResidence(Residence residence) {
     SQLiteDatabase db = this.getWritableDatabase();
     try {
-      db.delete("tableResidences", "id" + "=?", new String[]{residence.id.toString() + ""});
+      db.delete(TABLE_RESIDENCES, PRIMARY_KEY + "=?", new String[]{residence.uuid.toString() + ""});
     }
     catch (Exception e) {
       Log.d(TAG, "delete residence failure: " + e.getMessage());
@@ -117,14 +117,14 @@ public class DbHelper extends SQLiteOpenHelper
    */
   public List<Residence> selectResidences() {
     List<Residence> residences = new ArrayList<Residence>();
-    String query = "SELECT * FROM " + "tableResidences";
+    String query = "SELECT * FROM " + TABLE_RESIDENCES;
     SQLiteDatabase db = this.getWritableDatabase();
     Cursor cursor = db.rawQuery(query, null);
     if (cursor.moveToFirst()) {
       int columnIndex = 0;
       do {
         Residence residence = new Residence();
-        residence.id = UUID.fromString(cursor.getString(columnIndex++));
+        residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
         residence.geolocation = cursor.getString(columnIndex++);
         residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
         residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
@@ -146,8 +146,9 @@ public class DbHelper extends SQLiteOpenHelper
   public void deleteResidences() {
     SQLiteDatabase db = this.getWritableDatabase();
     try {
-      db.execSQL("delete from tableResidences");
-    } catch (Exception e) {
+      db.execSQL("delete from " + TABLE_RESIDENCES);
+    }
+    catch (Exception e) {
       Log.d(TAG, "delete residences failure: " + e.getMessage());
     }
   }
@@ -160,15 +161,14 @@ public class DbHelper extends SQLiteOpenHelper
    */
   public long getCount() {
     SQLiteDatabase db = this.getReadableDatabase();
-    long numberRecords  = DatabaseUtils.queryNumEntries(db, TABLE_RESIDENCES);
+    long numberRecords = DatabaseUtils.queryNumEntries(db, TABLE_RESIDENCES);
     db.close();
     return numberRecords;
   }
 
-
   /**
    * Update an existing Residence record.
-   * All fields except record id updated.
+   * All fields except record uuid updated.
    *
    * @param residence The Residence record being updated.
    */
@@ -182,11 +182,33 @@ public class DbHelper extends SQLiteOpenHelper
       values.put(TENANT, residence.tenant);
       values.put(ZOOM, Double.toString(residence.zoom));
       values.put(PHOTO, residence.photo);
-      db.update("tableResidences", values, "id" + "=?",  new String[]{residence.id.toString() + ""});
-    } catch (Exception e) {
+      db.update(TABLE_RESIDENCES, values, PRIMARY_KEY + "=?", new String[]{residence.uuid.toString() + ""});
+    }
+    catch (Exception e) {
       Log.d(TAG, "update residences failure: " + e.getMessage());
     }
   }
+
+  public long getRowId(UUID resId) {
+    SQLiteDatabase db = this.getReadableDatabase();
+    Cursor cursor = null;
+    long rowid = -1;
+    try {
+      cursor = db.rawQuery("SELECT rowid FROM " + TABLE_RESIDENCES + " WHERE " + PRIMARY_KEY + " = ?", new String[]{resId.toString() + ""});
+      if (cursor.moveToFirst()) {
+        rowid = cursor.getLong(0);
+        Log.d(TAG, "rowid: " + rowid);
+        return rowid;
+      }
+    }
+    finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+    return rowid;
+  }
+
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

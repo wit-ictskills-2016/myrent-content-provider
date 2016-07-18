@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Residence
 {
-  public UUID id;
+  public UUID uuid;
   public String geolocation;
   public Date date;
   public boolean rented;
@@ -17,7 +17,7 @@ public class Residence
 
   public Residence()
   {
-    id = UUID.randomUUID();
+    uuid = UUID.randomUUID();
     geolocation = "52.253456,-7.187162";
     date = new Date();
     rented = false;
