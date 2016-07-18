@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 /**
  * Created by jfitzgerald on 18/07/2016.
  */
-public class StatusProvider extends ContentProvider
+public class ResidenceProvider extends ContentProvider
 {
   @Override
   public boolean onCreate() {
