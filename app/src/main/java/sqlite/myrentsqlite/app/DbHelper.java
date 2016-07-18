@@ -36,7 +36,7 @@ public class DbHelper extends SQLiteOpenHelper
         ResidenceContract.Column.RENTED,
         ResidenceContract.Column.TENANT,
         ResidenceContract.Column.ZOOM,
-        ResidenceContract.Column.PRIMARY_KEY);
+        ResidenceContract.Column.PHOTO);
     db.execSQL(sql);
     Log.d(TAG, "DbHelper.onCreated: " + sql);
   }
@@ -179,6 +179,7 @@ public class DbHelper extends SQLiteOpenHelper
   /**
    * SQLite generates a long rowid. We require access to this because the UUID uuid is not
    * compatible with the CursorAdapter class that we use for the ContentProvider feature.
+   * https://www.sqlite.org/lang_createtable.html#rowid
    *
    * @param resId The UUID field in the Residence model object, present in the database.
    * @return The long rowid corresponding to the record whose UUID field is resID, the actual parameter.

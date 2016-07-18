@@ -16,6 +16,14 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+
+    <service 
+      android:name="sqlite.myrentsqlite.app.RefreshResidenceService"
+      android:exported="false"/>
+
+    <provider
+      android:name="sqlite.myrentsqlite.app.ResidenceProvider"
+      android:authorities="sqlite.myrentsqlite.app.ResidenceProvider"/>
   </application>
 
 </manifest>

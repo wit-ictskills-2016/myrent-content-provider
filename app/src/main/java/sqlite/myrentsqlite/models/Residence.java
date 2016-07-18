@@ -26,4 +26,12 @@ public class Residence
     photo = "photo";
   }
 
+  public Residence(String geolocation, boolean rented, String tenant, double zoom, String photo)
+  {
+    this.geolocation = geolocation;
+    this.rented = rented;
+    this.tenant = tenant;
+    this.zoom = zoom;
+    this.photo = photo;
+  }
 }

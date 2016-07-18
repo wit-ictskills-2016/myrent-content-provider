@@ -16,7 +16,7 @@ public class ResidenceContract
   static final String TABLE_RESIDENCES = "tableResidences";
 
   // Provider specific constants
-  public static final String AUTHORITY = "sqlite.myrentsqlite.app.StatusProvider";
+  public static final String AUTHORITY = "sqlite.myrentsqlite.app.ResidenceProvider";
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_RESIDENCES);
   public static final int STATUS_ITEM = 1;
   public static final int STATUS_DIR = 2;
@@ -27,6 +27,7 @@ public class ResidenceContract
   public class Column
   {
     static final String PRIMARY_KEY = "uuid";
+    static final String ID = BaseColumns._ID;
     static final String GEOLOCATION = "geolocation";
     static final String DATE = "date";
     static final String RENTED = "rented";

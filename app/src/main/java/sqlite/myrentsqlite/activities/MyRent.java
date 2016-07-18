@@ -1,5 +1,6 @@
 package sqlite.myrentsqlite.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 import sqlite.myrentsqlite.R;
 import sqlite.myrentsqlite.app.MyRentApp;
+import sqlite.myrentsqlite.app.RefreshResidenceService;;
 import sqlite.myrentsqlite.models.Residence;
 
 public class MyRent extends AppCompatActivity implements View.OnClickListener
@@ -27,10 +29,12 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
   MyRentApp app;
   Residence residence;
 
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_myrent);
+
 
     app = MyRentApp.getApp();
 
@@ -92,10 +96,12 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
   }
 
   private void addResidence() {
-    residence = new Residence();
+    //residence = new Residence();
 
-    app.dbHelper.addResidence(residence);
-
+    //app.dbHelper.addResidence(residence);
+    Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.ADD_RESIDENCE);
+    startService(intent);
   }
 
   /**
@@ -173,10 +179,10 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
    * For legacy reasons we use UUID as a primary key
    * SQLite generates a long row id - here we demo.
    */
-  public void getRowId()
-  {
+  public void getRowId() {
     addResidence();
     long rowid = app.dbHelper.getRowId(residence.uuid);
     Toast.makeText(this, "Row id : " + rowid, Toast.LENGTH_SHORT).show();
   }
+
 }

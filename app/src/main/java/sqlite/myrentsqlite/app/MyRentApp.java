@@ -6,6 +6,7 @@ import android.util.Log;
 public class MyRentApp extends Application
 {
   static final String TAG = "MyRentApp";
+
   public DbHelper dbHelper = null;
 
   private static MyRentApp app;
