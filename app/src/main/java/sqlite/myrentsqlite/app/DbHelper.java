@@ -18,22 +18,11 @@ import sqlite.myrentsqlite.models.Residence;
 public class DbHelper extends SQLiteOpenHelper
 {
   static final String TAG = "DbHelper";
-  static final String DATABASE_NAME = "residences.db";
-  static final int DATABASE_VERSION = 1;
-//  static final String TABLE_RESIDENCES = "tableResidences";
-
-//  static final String PRIMARY_KEY = "uuid";
-//  static final String GEOLOCATION = "geolocation";
-//  static final String DATE = "date";
-//  static final String RENTED = "rented";
-//  static final String TENANT = "tenant";
-//  static final String ZOOM = "zoom";
-//  static final String PHOTO = "photo";
 
   Context context;
 
   public DbHelper(Context context) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    super(context, ResidenceContract.DATABASE_NAME, null, ResidenceContract.DATABASE_VERSION);
     this.context = context;
   }
 
@@ -152,7 +141,6 @@ public class DbHelper extends SQLiteOpenHelper
     }
   }
 
-
   /**
    * Queries the database for the number of records.
    *
@@ -218,7 +206,8 @@ public class DbHelper extends SQLiteOpenHelper
   /**
    * Invoked when schema changed.
    * This determined by comparison existing version and old version.
-   * @param db The SQLite database
+   *
+   * @param db         The SQLite database
    * @param oldVersion The previous database version number.
    * @param newVersion The current database version number.
    */
