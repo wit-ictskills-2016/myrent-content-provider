@@ -18,8 +18,8 @@ public class Residence
   public Residence()
   {
     uuid = UUID.randomUUID();
-    date = new Date();
     geolocation = "52.253456,-7.187162";
+    date = new Date();
     rented = false;
     tenant = ": none presently";
     zoom = 16.0;
@@ -29,8 +29,8 @@ public class Residence
   public Residence(String geolocation, boolean rented, String tenant, double zoom, String photo)
   {
     uuid = UUID.randomUUID();
-    date = new Date();
     this.geolocation = geolocation;
+    date = new Date();
     this.rented = rented;
     this.tenant = tenant;
     this.zoom = zoom;

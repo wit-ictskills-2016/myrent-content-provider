@@ -8,15 +8,15 @@ import sqlite.myrentsqlite.models.Residence;
 
 /**
  * Created by jfitzgerald on 18/07/2016.
- * Fake cloud
+ * Simulated cloud
  */
 public class ResidenceCloud
 {
-  public Residence residence() {
+  public static Residence residence() {
     return new Residence("52.4444,-7.187162", true, "Barney Gumble", 12.0, "photo1.jpeg");
   }
 
-  public List<Residence> residences() {
+  public static List<Residence> residences() {
     ArrayList<Residence> list = new ArrayList<>();
 
     list.add(new Residence("52.4444,-7.187162", true, "Barney Gumble", 12.0, "photo1.jpeg"));

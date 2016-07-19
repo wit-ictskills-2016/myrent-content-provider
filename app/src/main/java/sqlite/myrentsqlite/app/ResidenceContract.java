@@ -18,8 +18,8 @@ public class ResidenceContract
   // Provider specific constants
   public static final String AUTHORITY = "sqlite.myrentsqlite.app.ResidenceProvider";
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_RESIDENCES);
-  public static final int STATUS_ITEM = 1;
-  public static final int STATUS_DIR = 2;
+  public static final int RESIDENCE_ITEM = 1;
+  public static final int RESIDENCE_DIR = 2;
   public static final String STATUS_TYPE_ITEM = "vnd.android.cursor.item/vnd.sqlite.myrentsqlite.app.provider.status";
   public static final String STATUS_TYPE_DIR = "vnd.android.cursor.dir/vnd.sqlite.myrentsqlite.app.provider.status";
   public static final String DEFAULT_SORT = Column.DATE + " DESC";

@@ -3,8 +3,14 @@ package sqlite.myrentsqlite.app;
 import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import sqlite.myrentsqlite.models.Residence;
 
@@ -17,6 +23,7 @@ public class RefreshResidenceService extends IntentService
   public static final String REFRESH = "refresh residence";
   public static final String ADD_RESIDENCE = "1";
   public static final String SELECT_RESIDENCE = "2";
+  public static final String SELECT_RESIDENCES = "3";
 
   ResidenceCloud cloud = new ResidenceCloud();
 
@@ -33,10 +40,23 @@ public class RefreshResidenceService extends IntentService
     super(name);
   }
 
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId)
+  {
+    String value = intent.getStringExtra(REFRESH);
+    switch (value) {
+      case ADD_RESIDENCE:
+        addResidence(new Residence());
+        break;
+      case SELECT_RESIDENCES:
+        selectResidences();
+        break;
+    }
+    return START_STICKY;
+  }
 
-  public void addResidence() {
+  private void addResidence(Residence residence) {
     ContentValues values = new ContentValues();
-    Residence residence = new Residence();
 
     values.put(ResidenceContract.Column.UUID, residence.uuid.toString());
     values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
@@ -50,20 +70,52 @@ public class RefreshResidenceService extends IntentService
         ResidenceContract.CONTENT_URI, values);
   }
 
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId)
-  {
-    String value = intent.getStringExtra(REFRESH);
-    switch (value) {
-      case ADD_RESIDENCE:
-        addResidence();
-        break;
-      case SELECT_RESIDENCE:
-        break;
+  /**
+   * Test query method in ResidenceProvider by
+   * obtaining a list of residences from simulated cloud,
+   * adding each residence as record to database,
+   * querying database for this list and
+   * checking result
+   */
+  private void selectResidences() {
+    // Populate database with list residences
+    List<Residence> residenceList = ResidenceCloud.residences();
+    for (Residence residence : residenceList) {
+      addResidence(residence);
     }
-    return START_STICKY;
-  }
 
+    // Query the database
+    List<Residence> residences = new ArrayList<Residence>();
+    Cursor cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, null, null, null);
+    try {
+      if (cursor.moveToFirst()) {
+        int columnIndex = 1; // skip column 0, the _id
+        do {
+          Residence residence = new Residence();
+
+          residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
+          residence.geolocation = cursor.getString(columnIndex++);
+          residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
+          residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
+          residence.tenant = cursor.getString(columnIndex++);
+          residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
+          residence.photo = cursor.getString(columnIndex++);
+
+          columnIndex = 1;
+
+          residences.add(residence);
+        } while (cursor.moveToNext());
+      }
+    } catch(Exception e) {
+      Log.d(TAG, e.getMessage());
+    }
+    finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+    }
+
+  }
   @Override
   protected void onHandleIntent(Intent intent) {
     //switch(getArguments().getSerializable(EXTRA_REFRESH_RESIDENCE);
