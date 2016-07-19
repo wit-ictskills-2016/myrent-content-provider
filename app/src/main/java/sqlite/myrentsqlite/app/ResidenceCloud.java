@@ -1,6 +1,7 @@
 package sqlite.myrentsqlite.app;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import sqlite.myrentsqlite.models.Residence;

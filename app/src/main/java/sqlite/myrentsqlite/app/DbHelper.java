@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -28,17 +29,22 @@ public class DbHelper extends SQLiteOpenHelper
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    String sql = String.format("create table %s (%s text primary key, %s text, %s text, %s text, %s text, %s text, %s text)",
-        ResidenceContract.TABLE_RESIDENCES,
-        ResidenceContract.Column.PRIMARY_KEY,
-        ResidenceContract.Column.GEOLOCATION,
-        ResidenceContract.Column.DATE,
-        ResidenceContract.Column.RENTED,
-        ResidenceContract.Column.TENANT,
-        ResidenceContract.Column.ZOOM,
-        ResidenceContract.Column.PHOTO);
-    db.execSQL(sql);
-    Log.d(TAG, "DbHelper.onCreated: " + sql);
+    //String sql = String.format("create table %s (%s text primary key, %s text, %s text, %s text, %s text, %s text, %s text, %s text)",
+
+    db.execSQL("CREATE TABLE "
+        + ResidenceContract.TABLE_RESIDENCES + " ("
+        + ResidenceContract.Column.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+        + ResidenceContract.Column.UUID + " TEXT,"
+        + ResidenceContract.Column.GEOLOCATION + " TEXT,"
+        + ResidenceContract.Column.DATE + " TEXT,"
+        + ResidenceContract.Column.RENTED + " TEXT,"
+        + ResidenceContract.Column.TENANT + " TEXT,"
+        + ResidenceContract.Column.ZOOM + " TEXT,"
+        + ResidenceContract.Column.PHOTO + " TEXT"
+        + ");");
+
+    //db.execSQL(sql);
+    //Log.d(TAG, "DbHelper.onCreated: " + sql);
   }
 
   /**
@@ -47,7 +53,8 @@ public class DbHelper extends SQLiteOpenHelper
   public void addResidence(Residence residence) {
     SQLiteDatabase db = this.getWritableDatabase();
     ContentValues values = new ContentValues();
-    values.put(ResidenceContract.Column.PRIMARY_KEY, residence.uuid.toString());
+
+    values.put(ResidenceContract.Column.UUID, residence.uuid.toString());
     values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
     values.put(ResidenceContract.Column.DATE, String.valueOf(residence.date.getTime()));
     values.put(ResidenceContract.Column.RENTED, residence.rented == true ? "yes" : "no");
@@ -67,12 +74,13 @@ public class DbHelper extends SQLiteOpenHelper
 
     try {
       residence = new Residence();
-      String query = "SELECT * FROM " + ResidenceContract.TABLE_RESIDENCES + " WHERE " + ResidenceContract.Column.PRIMARY_KEY + " = ?";
+      String query = "SELECT * FROM " + ResidenceContract.TABLE_RESIDENCES + " WHERE " + ResidenceContract.Column.ID + " = ?";
       cursor = db.rawQuery(query, new String[]{resId.toString() + ""});
 
       if (cursor.getCount() > 0) {
         int columnIndex = 0;
         cursor.moveToFirst();
+
         residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
         residence.geolocation = cursor.getString(columnIndex++);
         residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
@@ -80,6 +88,7 @@ public class DbHelper extends SQLiteOpenHelper
         residence.tenant = cursor.getString(columnIndex++);
         residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
         residence.photo = cursor.getString(columnIndex++);
+
       }
     }
     finally {
@@ -91,7 +100,7 @@ public class DbHelper extends SQLiteOpenHelper
   public void deleteResidence(Residence residence) {
     SQLiteDatabase db = this.getWritableDatabase();
     try {
-      db.delete(ResidenceContract.TABLE_RESIDENCES, ResidenceContract.Column.PRIMARY_KEY + "=?", new String[]{residence.uuid.toString() + ""});
+      db.delete(ResidenceContract.TABLE_RESIDENCES, ResidenceContract.Column.ID + "=?", new String[]{residence.uuid.toString() + ""});
     }
     catch (Exception e) {
       Log.d(TAG, "delete residence failure: " + e.getMessage());
@@ -112,6 +121,7 @@ public class DbHelper extends SQLiteOpenHelper
       int columnIndex = 0;
       do {
         Residence residence = new Residence();
+
         residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
         residence.geolocation = cursor.getString(columnIndex++);
         residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
@@ -119,6 +129,7 @@ public class DbHelper extends SQLiteOpenHelper
         residence.tenant = cursor.getString(columnIndex++);
         residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
         residence.photo = cursor.getString(columnIndex++);
+
         columnIndex = 0;
 
         residences.add(residence);
@@ -163,13 +174,15 @@ public class DbHelper extends SQLiteOpenHelper
     SQLiteDatabase db = this.getWritableDatabase();
     try {
       ContentValues values = new ContentValues();
+
       values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
       values.put(ResidenceContract.Column.DATE, String.valueOf(residence.date.getTime()));
       values.put(ResidenceContract.Column.RENTED, residence.rented == true ? "yes" : "no");
       values.put(ResidenceContract.Column.TENANT, residence.tenant);
       values.put(ResidenceContract.Column.ZOOM, Double.toString(residence.zoom));
       values.put(ResidenceContract.Column.PHOTO, residence.photo);
-      db.update(ResidenceContract.TABLE_RESIDENCES, values, ResidenceContract.Column.PRIMARY_KEY + "=?", new String[]{residence.uuid.toString() + ""});
+
+      db.update(ResidenceContract.TABLE_RESIDENCES, values, ResidenceContract.Column.ID + "=?", new String[]{residence.uuid.toString() + ""});
     }
     catch (Exception e) {
       Log.d(TAG, "update residences failure: " + e.getMessage());
@@ -189,7 +202,7 @@ public class DbHelper extends SQLiteOpenHelper
     Cursor cursor = null;
     long rowid = -1;
     try {
-      cursor = db.rawQuery("SELECT rowid FROM " + ResidenceContract.TABLE_RESIDENCES + " WHERE " + ResidenceContract.Column.PRIMARY_KEY + " = ?", new String[]{resId.toString() + ""});
+      cursor = db.rawQuery("SELECT rowid FROM " + ResidenceContract.TABLE_RESIDENCES + " WHERE " + ResidenceContract.Column.ID + " = ?", new String[]{resId.toString() + ""});
       if (cursor.moveToFirst()) {
         rowid = cursor.getLong(0);
         Log.d(TAG, "rowid: " + rowid);

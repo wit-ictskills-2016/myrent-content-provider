@@ -38,6 +38,7 @@ public class RefreshResidenceService extends IntentService
     ContentValues values = new ContentValues();
     Residence residence = new Residence();
 
+    values.put(ResidenceContract.Column.UUID, residence.uuid.toString());
     values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
     values.put(ResidenceContract.Column.DATE, String.valueOf(residence.date.getTime()));
     values.put(ResidenceContract.Column.RENTED, residence.rented == true ? "yes" : "no");

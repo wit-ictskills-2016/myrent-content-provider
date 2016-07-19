@@ -26,8 +26,8 @@ public class ResidenceContract
 
   public class Column
   {
-    static final String PRIMARY_KEY = "uuid";
     static final String ID = BaseColumns._ID;
+    static final String UUID = "uuid";
     static final String GEOLOCATION = "geolocation";
     static final String DATE = "date";
     static final String RENTED = "rented";

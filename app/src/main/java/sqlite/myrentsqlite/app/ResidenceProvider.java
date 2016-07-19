@@ -90,8 +90,9 @@ public class ResidenceProvider extends ContentProvider
     long rowId = db.insertWithOnConflict(ResidenceContract.TABLE_RESIDENCES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 // Was insert successful?
     if (rowId != -1) {
-      long id = values.getAsLong(ResidenceContract.Column.ID);
-      ret = ContentUris.withAppendedId(uri, id);
+      //Integer id = values.getAsInteger(ResidenceContract.Column.ID);
+      //ret = ContentUris.withAppendedId(uri, id);
+      ret = ContentUris.withAppendedId(uri, rowId);
       Log.d(TAG, "inserted uri: " + ret);
 // Notify that data for this uri has changed
       getContext().getContentResolver()
