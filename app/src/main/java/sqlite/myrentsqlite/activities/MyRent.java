@@ -112,19 +112,25 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
    * Additionally, it initializes this.residence field.
    * The id of this.residence is then used as a parameter in DbHelper.selectResidence.
    */
-  public void selectResidences() {
+  public void selectResidence() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
-    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.SELECT_RESIDENCES);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.SELECT_RESIDENCE);
     startService(intent);
   }
 
 
-  public void selectResidence() {
+  public void selectResidences() {
+    Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.SELECT_RESIDENCES);
+    startService(intent);
 //    List<Residence> residences = app.dbHelper.selectResidences();
 //    Toast.makeText(this, "Retrieved residence list containing  " + residences.size() + " records", Toast.LENGTH_SHORT).show();
   }
 
   public void deleteResidence() {
+    Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.DELETE_RESIDENCE);
+    startService(intent);
 //    if (residence == null) {
 //      addResidence();
 //    }
@@ -139,6 +145,9 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
    * Provide user feed back in a toast.
    */
   public void deleteResidences() {
+    Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.DELETE_RESIDENCES);
+    startService(intent);
 //    app.dbHelper.deleteResidences();
 //    Toast.makeText(this, "Number of records in database " + app.dbHelper.getCount(), Toast.LENGTH_SHORT).show();
 
@@ -151,6 +160,9 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
    * Verify and provide toast feedback.
    */
   public void updateResidence() {
+    Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
+    intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.UPDATE_RESIDENCE);
+    startService(intent);
 //    addResidence(); // This initializes the instance variable Residence residence
 //    Residence res = app.dbHelper.selectResidence(residence.uuid);
 //    // Makes some distinguishing changes to res fields

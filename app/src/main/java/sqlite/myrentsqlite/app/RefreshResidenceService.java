@@ -23,7 +23,10 @@ public class RefreshResidenceService extends IntentService
   public static final String REFRESH = "refresh residence";
   public static final String ADD_RESIDENCE = "1";
   public static final String SELECT_RESIDENCE = "2";
-  public static final String SELECT_RESIDENCES = "3";
+  public static final String DELETE_RESIDENCE = "3";
+  public static final String SELECT_RESIDENCES = "4";
+  public static final String DELETE_RESIDENCES = "5";
+  public static final String UPDATE_RESIDENCE = "6";
 
   ResidenceCloud cloud = new ResidenceCloud();
 
@@ -45,13 +48,32 @@ public class RefreshResidenceService extends IntentService
   {
     String value = intent.getStringExtra(REFRESH);
     switch (value) {
+
       case ADD_RESIDENCE:
         addResidence(new Residence());
         break;
+
+      case SELECT_RESIDENCE:
+        selectResidence();
+        break;
+
+      case DELETE_RESIDENCE:
+        deleteResidence();
+        break;
+
       case SELECT_RESIDENCES:
         selectResidences();
         break;
+
+      case DELETE_RESIDENCES:
+        deleteResidences();
+        break;
+
+      case UPDATE_RESIDENCE:
+        updateResidence();
+        break;
     }
+
     return START_STICKY;
   }
 
@@ -68,6 +90,44 @@ public class RefreshResidenceService extends IntentService
 
     Uri uri = getContentResolver().insert(
         ResidenceContract.CONTENT_URI, values);
+  }
+
+  /**
+   * Test query method in ResidenceProvider by
+   * obtaining a single residences from simulated cloud,
+   * adding this residence as record to database,
+   * querying database for this record and
+   * checking result
+   */
+  private void selectResidence()
+  {
+    // Populate database with sample residence
+    Residence residence = ResidenceCloud.residence();
+    addResidence(residence);
+
+    // Query database
+
+    Cursor cursor = null;
+    try {
+      cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, null, null, null);
+
+      if (cursor.getCount() > 0) {
+        int columnIndex = 1; // Skip the 0th column - the _id
+        cursor.moveToFirst();
+
+        residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
+        residence.geolocation = cursor.getString(columnIndex++);
+        residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
+        residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
+        residence.tenant = cursor.getString(columnIndex++);
+        residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
+        residence.photo = cursor.getString(columnIndex++);
+
+      }
+    }
+    finally {
+      cursor.close();
+    }
   }
 
   /**
@@ -116,6 +176,25 @@ public class RefreshResidenceService extends IntentService
     }
 
   }
+
+
+  private void deleteResidence()
+  {
+
+  }
+
+
+  private void deleteResidences()
+  {
+
+  }
+
+
+  private void updateResidence()
+  {
+
+  }
+
   @Override
   protected void onHandleIntent(Intent intent) {
     //switch(getArguments().getSerializable(EXTRA_REFRESH_RESIDENCE);
