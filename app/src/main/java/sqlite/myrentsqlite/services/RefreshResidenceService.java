@@ -1,4 +1,4 @@
-package sqlite.myrentsqlite.app;
+package sqlite.myrentsqlite.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
@@ -12,7 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import sqlite.myrentsqlite.app.ResidenceCloud;
 import sqlite.myrentsqlite.models.Residence;
+import sqlite.myrentsqlite.providers.ResidenceContract;
 
 /**
  * Created by jfitzgerald on 18/07/2016.

@@ -1,4 +1,4 @@
-package sqlite.myrentsqlite.app;
+package sqlite.myrentsqlite.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -73,7 +73,7 @@ public class ResidenceProvider extends ContentProvider
     Cursor cursor = qb.query(db, projection, selection, selectionArgs,
         null, null, orderBy);
 
-// register for uri changes
+    // register for uri changes
     cursor.setNotificationUri(getContext().getContentResolver(), uri); // Cursor data refresh
     Log.d(TAG, "queried records: " + cursor.getCount());
     return cursor;
@@ -98,19 +98,19 @@ public class ResidenceProvider extends ContentProvider
   @Override
   public Uri insert(Uri uri, ContentValues values) {
     Uri ret = null;
-// Assert correct uri
+    // Assert correct uri
     if (uriMatcher.match(uri) != ResidenceContract.RESIDENCE_DIR) {
       throw new IllegalArgumentException("Illegal uri: " + uri);
     }
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     long rowId = db.insertWithOnConflict(ResidenceContract.TABLE_RESIDENCES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
-// Was insert successful?
+    // Was insert successful?
     if (rowId != -1) {
       //Integer id = values.getAsInteger(ResidenceContract.Column.ID);
       //ret = ContentUris.withAppendedId(uri, id);
       ret = ContentUris.withAppendedId(uri, rowId);
       Log.d(TAG, "inserted uri: " + ret);
-// Notify that data for this uri has changed
+      // Notify that data for this uri has changed
       getContext().getContentResolver()
           .notifyChange(uri, null);
     }
@@ -122,7 +122,7 @@ public class ResidenceProvider extends ContentProvider
     String where;
     switch (uriMatcher.match(uri)) {
       case ResidenceContract.RESIDENCE_DIR:
-// so we count deleted rows
+        // so we count deleted rows
         where = (selection == null) ? "1" : selection;
         break;
       case ResidenceContract.RESIDENCE_ITEM:
@@ -139,7 +139,7 @@ public class ResidenceProvider extends ContentProvider
     SQLiteDatabase db = dbHelper.getWritableDatabase();
     int ret = db.delete(ResidenceContract.TABLE_RESIDENCES, where, selectionArgs);
     if(ret > 0) {
-// Notify that data for this uri has changed
+      // Notify that data for this uri has changed
       getContext().getContentResolver().notifyChange(uri, null);
     }
     Log.d(TAG, "deleted records: " + ret);
@@ -152,7 +152,7 @@ public class ResidenceProvider extends ContentProvider
     String where;
     switch (uriMatcher.match(uri)) {
       case ResidenceContract.RESIDENCE_DIR:
-// so we count updated rows
+        // so we count updated rows
         where = selection; 
         break;
       case ResidenceContract.RESIDENCE_ITEM:
@@ -170,7 +170,7 @@ public class ResidenceProvider extends ContentProvider
     int ret = db.update(ResidenceContract.TABLE_RESIDENCES, values,
         where, selectionArgs);
     if(ret > 0) {
-// Notify that data for this URI has changed
+      // Notify that data for this URI has changed
       getContext().getContentResolver().notifyChange(uri, null);
     }
     Log.d(TAG, "updated records: " + ret);
