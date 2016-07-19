@@ -44,8 +44,7 @@ public class RefreshResidenceService extends IntentService
   }
 
   @Override
-  public int onStartCommand(Intent intent, int flags, int startId)
-  {
+  public int onStartCommand(Intent intent, int flags, int startId) {
     String value = intent.getStringExtra(REFRESH);
     switch (value) {
 
@@ -92,24 +91,29 @@ public class RefreshResidenceService extends IntentService
         ResidenceContract.CONTENT_URI, values);
   }
 
+  private void selectResidence() {
+    Residence residence = ResidenceCloud.residence();
+    addResidence(residence);
+    selectResidence(residence.uuid);
+  }
+
   /**
    * Test query method in ResidenceProvider by
    * obtaining a single residences from simulated cloud,
    * adding this residence as record to database,
    * querying database for this record and
    * checking result
+   * Refer to ResidenceProvider.query for documentation query params
    */
-  private void selectResidence()
-  {
-    // Populate database with sample residence
-    Residence residence = ResidenceCloud.residence();
-    addResidence(residence);
+  private Residence selectResidence(UUID uuid) {
+    Residence residence = new Residence();
+    String selection = ResidenceContract.Column.UUID + " = ?";
+    String[] selectionArgs = new String[]{uuid + ""};
 
     // Query database
-
     Cursor cursor = null;
     try {
-      cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, null, null, null);
+      cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, selection, selectionArgs, null);
 
       if (cursor.getCount() > 0) {
         int columnIndex = 1; // Skip the 0th column - the _id
@@ -128,6 +132,8 @@ public class RefreshResidenceService extends IntentService
     finally {
       cursor.close();
     }
+
+    return residence;
   }
 
   /**
@@ -162,7 +168,8 @@ public class RefreshResidenceService extends IntentService
           residences.add(residence);
         } while (cursor.moveToNext());
       }
-    } catch(Exception e) {
+    }
+    catch (Exception e) {
       Log.d(TAG, e.getMessage());
     }
     finally {
@@ -178,8 +185,7 @@ public class RefreshResidenceService extends IntentService
    * Add a list of residences to database
    * Pick on at random from the list and delete it from db
    */
-  private void deleteResidence()
-  {
+  private void deleteResidence() {
     List<Residence> residenceList = populateSampleData();
 
     String uuid = residenceList.get(0).uuid.toString(); // Pick the first row (arbitrarily)
@@ -190,8 +196,7 @@ public class RefreshResidenceService extends IntentService
   }
 
 
-  private void deleteResidences()
-  {
+  private void deleteResidences() {
     List<Residence> residenceList = populateSampleData();
 
     int response = getContentResolver().delete(ResidenceContract.CONTENT_URI, null, null);
@@ -199,8 +204,53 @@ public class RefreshResidenceService extends IntentService
   }
 
 
-  private void updateResidence()
-  {
+  /**
+   * Test method
+   */
+
+  private void updateResidence() {
+    // Populate database with sample residence
+    Residence residence = ResidenceCloud.residence();
+    addResidence(residence);
+
+    // Modify the residence and update database copy
+    residence.zoom = 40;
+    residence.tenant = "A. N. Other";
+
+    updateResidence(residence);
+
+    Residence residenceUpdated = selectResidence(residence.uuid);
+
+    boolean testResult = residence.zoom == residenceUpdated.zoom &&
+        residence.tenant.equals(residenceUpdated.tenant);
+    
+    Log.d(TAG, "update residence attempt: " + testResult);
+  }
+
+  /**
+   * Update a residence record
+   */
+  private void updateResidence(Residence residence) {
+    String uuid = residence.uuid.toString();
+    String selection = ResidenceContract.Column.UUID + " = ?";
+    String[] selectionArgs = new String[]{uuid + ""};
+
+    try {
+      ContentValues values = new ContentValues();
+
+      values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
+      values.put(ResidenceContract.Column.DATE, String.valueOf(residence.date.getTime()));
+      values.put(ResidenceContract.Column.RENTED, residence.rented == true ? "yes" : "no");
+      values.put(ResidenceContract.Column.TENANT, residence.tenant);
+      values.put(ResidenceContract.Column.ZOOM, Double.toString(residence.zoom));
+      values.put(ResidenceContract.Column.PHOTO, residence.photo);
+
+      getContentResolver().update(ResidenceContract.CONTENT_URI, values, selection, selectionArgs);
+
+    }
+    catch (Exception e) {
+      Log.d(TAG, "update residences failure: " + e.getMessage());
+    }
 
   }
 
@@ -208,14 +258,14 @@ public class RefreshResidenceService extends IntentService
    * Populate database with list sample residences
    * Used for testing
    */
-  private List<Residence> populateSampleData()
-  {
+  private List<Residence> populateSampleData() {
     List<Residence> residenceList = ResidenceCloud.residences();
     for (Residence residence : residenceList) {
       addResidence(residence);
     }
     return residenceList;
   }
+
   @Override
   protected void onHandleIntent(Intent intent) {
     //switch(getArguments().getSerializable(EXTRA_REFRESH_RESIDENCE);
