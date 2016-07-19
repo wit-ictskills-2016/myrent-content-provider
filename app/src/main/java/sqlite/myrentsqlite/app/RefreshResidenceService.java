@@ -138,11 +138,7 @@ public class RefreshResidenceService extends IntentService
    * checking result
    */
   private void selectResidences() {
-    // Populate database with list residences
-    List<Residence> residenceList = ResidenceCloud.residences();
-    for (Residence residence : residenceList) {
-      addResidence(residence);
-    }
+    populateSampleData();
 
     // Query the database
     List<Residence> residences = new ArrayList<Residence>();
@@ -184,11 +180,7 @@ public class RefreshResidenceService extends IntentService
    */
   private void deleteResidence()
   {
-    // Populate database
-    List<Residence> residenceList = ResidenceCloud.residences();
-    for (Residence residence : residenceList) {
-      addResidence(residence);
-    }
+    List<Residence> residenceList = populateSampleData();
 
     String uuid = residenceList.get(0).uuid.toString(); // Pick the first row (arbitrarily)
     String selection = ResidenceContract.Column.UUID + " = ?";
@@ -200,7 +192,10 @@ public class RefreshResidenceService extends IntentService
 
   private void deleteResidences()
   {
+    List<Residence> residenceList = populateSampleData();
 
+    int response = getContentResolver().delete(ResidenceContract.CONTENT_URI, null, null);
+    Log.d(TAG, "delete all records response: " + response);
   }
 
 
@@ -209,6 +204,18 @@ public class RefreshResidenceService extends IntentService
 
   }
 
+  /**
+   * Populate database with list sample residences
+   * Used for testing
+   */
+  private List<Residence> populateSampleData()
+  {
+    List<Residence> residenceList = ResidenceCloud.residences();
+    for (Residence residence : residenceList) {
+      addResidence(residence);
+    }
+    return residenceList;
+  }
   @Override
   protected void onHandleIntent(Intent intent) {
     //switch(getArguments().getSerializable(EXTRA_REFRESH_RESIDENCE);
