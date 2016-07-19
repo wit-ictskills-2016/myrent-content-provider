@@ -111,27 +111,22 @@ public class RefreshResidenceService extends IntentService
     String[] selectionArgs = new String[]{uuid + ""};
 
     // Query database
-    Cursor cursor = null;
-    try {
-      cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, selection, selectionArgs, null);
+    Cursor cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, selection, selectionArgs, null);
 
-      if (cursor.getCount() > 0) {
-        int columnIndex = 1; // Skip the 0th column - the _id
-        cursor.moveToFirst();
+    if (cursor.getCount() > 0) {
+      int columnIndex = 1; // Skip the 0th column - the _id
+      cursor.moveToFirst();
 
-        residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
-        residence.geolocation = cursor.getString(columnIndex++);
-        residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
-        residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
-        residence.tenant = cursor.getString(columnIndex++);
-        residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
-        residence.photo = cursor.getString(columnIndex++);
+      residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
+      residence.geolocation = cursor.getString(columnIndex++);
+      residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
+      residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
+      residence.tenant = cursor.getString(columnIndex++);
+      residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
+      residence.photo = cursor.getString(columnIndex++);
 
-      }
     }
-    finally {
-      cursor.close();
-    }
+    cursor.close();
 
     return residence;
   }
@@ -149,34 +144,26 @@ public class RefreshResidenceService extends IntentService
     // Query the database
     List<Residence> residences = new ArrayList<Residence>();
     Cursor cursor = getContentResolver().query(ResidenceContract.CONTENT_URI, null, null, null, null);
-    try {
-      if (cursor.moveToFirst()) {
-        int columnIndex = 1; // skip column 0, the _id
-        do {
-          Residence residence = new Residence();
 
-          residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
-          residence.geolocation = cursor.getString(columnIndex++);
-          residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
-          residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
-          residence.tenant = cursor.getString(columnIndex++);
-          residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
-          residence.photo = cursor.getString(columnIndex++);
+    if (cursor.moveToFirst()) {
+      int columnIndex = 1; // skip column 0, the _id
+      do {
+        Residence residence = new Residence();
 
-          columnIndex = 1;
+        residence.uuid = UUID.fromString(cursor.getString(columnIndex++));
+        residence.geolocation = cursor.getString(columnIndex++);
+        residence.date = new Date(Long.parseLong(cursor.getString(columnIndex++)));
+        residence.rented = cursor.getString(columnIndex++) == "yes" ? true : false;
+        residence.tenant = cursor.getString(columnIndex++);
+        residence.zoom = Double.parseDouble(cursor.getString(columnIndex++));
+        residence.photo = cursor.getString(columnIndex++);
 
-          residences.add(residence);
-        } while (cursor.moveToNext());
-      }
+        columnIndex = 1;
+
+        residences.add(residence);
+      } while (cursor.moveToNext());
     }
-    catch (Exception e) {
-      Log.d(TAG, e.getMessage());
-    }
-    finally {
-      if (cursor != null) {
-        cursor.close();
-      }
-    }
+    cursor.close();
 
   }
 
@@ -223,7 +210,7 @@ public class RefreshResidenceService extends IntentService
 
     boolean testResult = residence.zoom == residenceUpdated.zoom &&
         residence.tenant.equals(residenceUpdated.tenant);
-    
+
     Log.d(TAG, "update residence attempt: " + testResult);
   }
 
@@ -235,7 +222,6 @@ public class RefreshResidenceService extends IntentService
     String selection = ResidenceContract.Column.UUID + " = ?";
     String[] selectionArgs = new String[]{uuid + ""};
 
-    try {
       ContentValues values = new ContentValues();
 
       values.put(ResidenceContract.Column.GEOLOCATION, residence.geolocation);
@@ -248,11 +234,6 @@ public class RefreshResidenceService extends IntentService
       getContentResolver().update(ResidenceContract.CONTENT_URI, values, selection, selectionArgs);
 
     }
-    catch (Exception e) {
-      Log.d(TAG, "update residences failure: " + e.getMessage());
-    }
-
-  }
 
   /**
    * Populate database with list sample residences
