@@ -178,9 +178,23 @@ public class RefreshResidenceService extends IntentService
   }
 
 
+  /**
+   * Add a list of residences to database
+   * Pick on at random from the list and delete it from db
+   */
   private void deleteResidence()
   {
+    // Populate database
+    List<Residence> residenceList = ResidenceCloud.residences();
+    for (Residence residence : residenceList) {
+      addResidence(residence);
+    }
 
+    String uuid = residenceList.get(0).uuid.toString(); // Pick the first row (arbitrarily)
+    String selection = ResidenceContract.Column.UUID + " = ?";
+    String[] selectionArgs = new String[]{uuid + ""};
+    int response = getContentResolver().delete(ResidenceContract.CONTENT_URI, selection, selectionArgs);
+    Log.d(TAG, "delete record response: " + response);
   }
 
 
