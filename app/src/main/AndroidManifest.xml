@@ -19,11 +19,13 @@
 
     <service 
       android:name="sqlite.myrentsqlite.services.RefreshResidenceService"
-      android:exported="true"/>
+      android:exported="false"/>
 
     <provider
       android:name="sqlite.myrentsqlite.providers.ResidenceProvider"
-      android:authorities="sqlite.myrentsqlite.providers.ResidenceProvider"/>
+      android:authorities="sqlite.myrentsqlite.providers.ResidenceProvider"
+      android:exported="true"/>
+
   </application>
 
 </manifest>
