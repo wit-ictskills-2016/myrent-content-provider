@@ -92,11 +92,7 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
   }
 
   /**
-   * This method demonstrates how to select a Residence record, identified by
-   * its primary key, the UUID field.
-   * Invoking addResidence() writes a Residence record to the database.
-   * Additionally, it initializes this.residence field.
-   * The id of this.residence is then used as a parameter in DbHelper.selectResidence.
+   * Select a single Residence record
    */
   public void selectResidence() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
@@ -105,12 +101,18 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
   }
 
 
+  /**
+   * Select all Residence records
+   */
   public void selectResidences() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
     intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.SELECT_RESIDENCES);
     startService(intent);
   }
 
+  /**
+   * Delete a single Residence record
+   */
   public void deleteResidence() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
     intent.putExtra(RefreshResidenceService.REFRESH, RefreshResidenceService.DELETE_RESIDENCE);
@@ -119,8 +121,6 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
 
   /**
    * Delete all records.
-   * Count the number of rows in database following deletion -should be zero.
-   * Provide user feed back in a toast.
    */
   public void deleteResidences() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);
@@ -130,9 +130,6 @@ public class MyRent extends AppCompatActivity implements View.OnClickListener
 
   /**
    * Update a residence record.
-   * Create and insert a test record.
-   * Make some changes to its fields and update its copy in the database.
-   * Verify and provide toast feedback.
    */
   public void updateResidence() {
     Intent intent = new Intent(getBaseContext(), RefreshResidenceService.class);

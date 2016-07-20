@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import sqlite.myrentsqlite.app.ResidenceCloud;
+import sqlite.myrentsqlite.cloud.ResidenceCloud;
 import sqlite.myrentsqlite.models.Residence;
 import sqlite.myrentsqlite.providers.ResidenceContract;
 
@@ -58,12 +58,12 @@ public class RefreshResidenceService extends IntentService
         selectResidence();
         break;
 
-      case DELETE_RESIDENCE:
-        deleteResidence();
-        break;
-
       case SELECT_RESIDENCES:
         selectResidences();
+        break;
+
+      case DELETE_RESIDENCE:
+        deleteResidence();
         break;
 
       case DELETE_RESIDENCES:
@@ -93,6 +93,11 @@ public class RefreshResidenceService extends IntentService
         ResidenceContract.CONTENT_URI, values);
   }
 
+  /**
+   * Select a single residence.
+   * To ensure the database is populated
+   * we first create a default Residence object and add it to the database.
+   */
   private void selectResidence() {
     Residence residence = ResidenceCloud.residence();
     addResidence(residence);
@@ -185,6 +190,9 @@ public class RefreshResidenceService extends IntentService
   }
 
 
+  /**
+   * Delete all Residence records.
+   */
   private void deleteResidences() {
     List<Residence> residenceList = populateSampleData();
 
@@ -194,7 +202,7 @@ public class RefreshResidenceService extends IntentService
 
 
   /**
-   * Test method
+   * Test the update method
    */
 
   private void updateResidence() {
@@ -251,8 +259,6 @@ public class RefreshResidenceService extends IntentService
 
   @Override
   protected void onHandleIntent(Intent intent) {
-    //switch(getArguments().getSerializable(EXTRA_REFRESH_RESIDENCE);
-
     Log.d(TAG, "onHandleIntent invoked");
   }
 }
