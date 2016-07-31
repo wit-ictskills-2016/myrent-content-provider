@@ -103,11 +103,9 @@ public class ResidenceProvider extends ContentProvider
       throw new IllegalArgumentException("Illegal uri: " + uri);
     }
     SQLiteDatabase db = dbHelper.getWritableDatabase();
-    long rowId = db.insertWithOnConflict(ResidenceContract.TABLE_RESIDENCES, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    long rowId = db.insert(ResidenceContract.TABLE_RESIDENCES, null, values);
     // Was insert successful?
     if (rowId != -1) {
-      //Integer id = values.getAsInteger(ResidenceContract.Column.ID);
-      //ret = ContentUris.withAppendedId(uri, id);
       ret = ContentUris.withAppendedId(uri, rowId);
       Log.d(TAG, "inserted uri: " + ret);
       // Notify that data for this uri has changed

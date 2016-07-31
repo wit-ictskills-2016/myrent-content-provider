@@ -89,8 +89,7 @@ public class RefreshResidenceService extends IntentService
     values.put(ResidenceContract.Column.ZOOM, Double.toString(residence.zoom));
     values.put(ResidenceContract.Column.PHOTO, residence.photo);
 
-    Uri uri = getContentResolver().insert(
-        ResidenceContract.CONTENT_URI, values);
+    Uri uri = getContentResolver().insert(ResidenceContract.CONTENT_URI, values);
   }
 
   /**
